@@ -7,6 +7,7 @@
     "start": "npm run build && node build/index.js",
     "tsc": "./node_modules/typescript/bin/tsc",
     "build": "rimraf ./build && tsc",
+    "rimraf": "./node_modules/rimraf/rimraf",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
