@@ -36,8 +36,8 @@ class UserController {
             }
             const hashPassword = yield bcrypt_1.default.hash(password, 5);
             const user = yield User.create({ email, password: hashPassword, role });
-            const jwtToken = generateJwt(user.id, user.email, user.role);
-            return res.json({ jwtToken });
+            const token = generateJwt(user.id, user.email, user.role);
+            return res.json({ token });
         });
     }
     login(req, res, next) {
@@ -51,12 +51,15 @@ class UserController {
             if (!comparePassword) {
                 return next(ApiError_1.default.badRequest("Incorrect password"));
             }
-            const jwtToken = generateJwt(user.id, user.email, user.role);
-            return res.json({ jwtToken });
+            const token = generateJwt(user.id, user.email, user.role);
+            return res.json({ token });
         });
     }
     checkAuth(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () { });
+        return __awaiter(this, void 0, void 0, function* () {
+            const token = generateJwt(req.user.id, req.user.email, req.user.role);
+            return res.json({ token });
+        });
     }
 }
 const usersController = new UserController();

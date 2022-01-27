@@ -16,7 +16,7 @@ require("dotenv").config();
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const index_1 = __importDefault(require("./routes/index"));
-const ErrorHandlingMiddleware_1 = __importDefault(require("./middleware/ErrorHandlingMiddleware"));
+const errorHandlingMiddleware_1 = __importDefault(require("./middleware/errorHandlingMiddleware"));
 const sequelize = require("./db");
 const models = require("./models/models");
 const port = process.env.PORT || 4000;
@@ -24,7 +24,7 @@ const app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use("/api", index_1.default);
-app.use(ErrorHandlingMiddleware_1.default);
+app.use(errorHandlingMiddleware_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield sequelize.authenticate();

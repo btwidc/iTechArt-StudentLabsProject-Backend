@@ -2,7 +2,7 @@ require("dotenv").config();
 import express from "express";
 import cors from "cors";
 import router from "./routes/index";
-import errorHandler from "./middleware/ErrorHandlingMiddleware";
+import errorHandler from "./middleware/errorHandlingMiddleware";
 const sequelize = require("./db");
 const models = require("./models/models");
 const port = process.env.PORT || 4000;
