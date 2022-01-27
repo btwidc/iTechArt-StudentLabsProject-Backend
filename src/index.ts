@@ -1,10 +1,15 @@
 require("dotenv").config();
 import express from "express";
-
-const app = express();
-const port = process.env.PORT || 4000;
+import cors from "cors";
+import router from "./routes/index";
 const sequelize = require("./db");
 const models = require("./models/models");
+const port = process.env.PORT || 4000;
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use("/api", router);
 
 const start = async () => {
   try {
@@ -12,9 +17,6 @@ const start = async () => {
     await sequelize.sync();
     app.listen(port, () => {
       console.log(`App listening on port ${port}`);
-    });
-    app.get("/", (req, res) => {
-      res.send("Started!");
     });
   } catch (e) {
     console.log(e);

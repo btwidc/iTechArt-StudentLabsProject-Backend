@@ -14,19 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const express_1 = __importDefault(require("express"));
-const app = express_1.default();
-const port = process.env.PORT || 4000;
+const cors_1 = __importDefault(require("cors"));
+const index_1 = __importDefault(require("./routes/index"));
 const sequelize = require("./db");
 const models = require("./models/models");
+const port = process.env.PORT || 4000;
+const app = express_1.default();
+app.use(cors_1.default());
+app.use(express_1.default.json());
+app.use("/api", index_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield sequelize.authenticate();
         yield sequelize.sync();
         app.listen(port, () => {
             console.log(`App listening on port ${port}`);
-        });
-        app.get("/", (req, res) => {
-            res.send("Started!");
         });
     }
     catch (e) {
