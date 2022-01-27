@@ -13,21 +13,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const { User } = require("../models/models");
+const generateJwt = (id, email, role) => {
+    return jsonwebtoken_1.default.sign({
+        id,
+        email,
+        role,
+    }, process.env.SECRET_KEY, { expiresIn: "24h" });
+};
 class UserController {
-    registration(req, res) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    registration(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, password, role } = req.body;
+            if (!email || !password) {
+                return next(ApiError_1.default.badRequest("Incorrect email or password"));
+            }
+            const checkUser = yield User.findOne({ where: { email } });
+            if (checkUser) {
+                return next(ApiError_1.default.badRequest("User with this email already exists"));
+            }
+            const hashPassword = yield bcrypt_1.default.hash(password, 5);
+            const user = yield User.create({ email, password: hashPassword, role });
+            const jwtToken = generateJwt(user.id, user.email, user.role);
+            return res.json({ jwtToken });
+        });
     }
-    login(req, res) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    login(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, password } = req.body;
+            const user = yield User.findOne({ where: { email } });
+            if (!user) {
+                return next(ApiError_1.default.badRequest("User is not exists"));
+            }
+            let comparePassword = bcrypt_1.default.compareSync(password, user.password);
+            if (!comparePassword) {
+                return next(ApiError_1.default.badRequest("Incorrect password"));
+            }
+            const jwtToken = generateJwt(user.id, user.email, user.role);
+            return res.json({ jwtToken });
+        });
     }
     checkAuth(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.query;
-            if (!id) {
-                return next(ApiError_1.default.notFoundError("ID not set"));
-            }
-            res.json(id);
-        });
+        return __awaiter(this, void 0, void 0, function* () { });
     }
 }
 const usersController = new UserController();
