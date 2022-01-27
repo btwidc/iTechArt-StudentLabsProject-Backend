@@ -23,6 +23,11 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "cors": "^2.8.5",
+    "dotenv": "^14.3.2",
+    "express": "^4.16.4",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.14.1"
   }
 }
