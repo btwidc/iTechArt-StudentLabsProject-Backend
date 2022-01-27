@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcrypt_nodejs_1 = __importDefault(require("bcrypt-nodejs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const { User } = require("../models/models");
 const generateJwt = (id, email, role) => {
@@ -34,7 +34,8 @@ class UserController {
             if (checkUser) {
                 return next(ApiError_1.default.badRequest("User with this email already exists"));
             }
-            const hashPassword = yield bcrypt_1.default.hash(password, 5);
+            const salt = bcrypt_nodejs_1.default.genSaltSync(10);
+            const hashPassword = yield bcrypt_nodejs_1.default.hashSync(password, salt);
             const user = yield User.create({ email, password: hashPassword, role });
             const token = generateJwt(user.id, user.email, user.role);
             return res.json({ token });
@@ -47,7 +48,7 @@ class UserController {
             if (!user) {
                 return next(ApiError_1.default.badRequest("User is not exists"));
             }
-            let comparePassword = bcrypt_1.default.compareSync(password, user.password);
+            let comparePassword = bcrypt_nodejs_1.default.compareSync(password, user.password);
             if (!comparePassword) {
                 return next(ApiError_1.default.badRequest("Incorrect password"));
             }

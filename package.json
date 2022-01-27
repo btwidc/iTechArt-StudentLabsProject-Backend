@@ -27,7 +27,7 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "bcrypt": "^5.0.1",
+    "bcrypt-nodejs": "^0.0.3",
     "cors": "^2.8.5",
     "dotenv": "^14.3.2",
     "express": "^4.16.4",

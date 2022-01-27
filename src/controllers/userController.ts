@@ -1,5 +1,5 @@
 import ApiError from "../errors/ApiError";
-import bcrypt from "bcrypt";
+import bcrypt from "bcrypt-nodejs";
 import jwt from "jsonwebtoken";
 const { User } = require("../models/models");
 
@@ -25,7 +25,8 @@ class UserController {
     if (checkUser) {
       return next(ApiError.badRequest("User with this email already exists"));
     }
-    const hashPassword = await bcrypt.hash(password, 5);
+    const salt = bcrypt.genSaltSync(10);
+    const hashPassword = await bcrypt.hashSync(password, salt);
     const user = await User.create({ email, password: hashPassword, role });
     const token = generateJwt(user.id, user.email, user.role);
     return res.json({ token });
