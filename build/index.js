@@ -21,7 +21,7 @@ const errorHandlingMiddleware = require("./middleware/errorHandlingMiddleware");
 const sequelize = require("./db");
 const port = process.env.PORT || 4000;
 const app = express_1.default();
-app.use(cors_1.default());
+app.use(cors_1.default({ credentials: true, origin: process.env.WEB_CLIENT_URL }));
 app.use(express_1.default.json());
 app.use(cookie_parser_1.default());
 app.use("/api", index_1.default);
