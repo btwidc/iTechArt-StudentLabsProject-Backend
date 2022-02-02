@@ -1,54 +1,72 @@
-import ApiError from "../errors/ApiError";
-import bcrypt from "bcrypt-nodejs";
-import jwt from "jsonwebtoken";
-const { User } = require("../models/models");
-
-const generateJwt = (id, email, role) => {
-  return jwt.sign(
-    {
-      id,
-      email,
-      role,
-    },
-    process.env.SECRET_KEY,
-    { expiresIn: "24h" }
-  );
-};
+const userService = require("../services/userService");
+const { validationResult } = require("express-validator");
+const ApiError = require("../errors/ApiError");
 
 class UserController {
   async registration(req, res, next) {
-    const { email, password, role } = req.body;
-    if (!email || !password) {
-      return next(ApiError.badRequest("Incorrect email or password"));
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest("Validation error", errors.array()));
+      }
+      const { email, password, role } = req.body;
+      const userData = await userService.registration(email, password, "HR");
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.json(userData);
+    } catch (e) {
+      next(e);
     }
-    const checkUser = await User.findOne({ where: { email } });
-    if (checkUser) {
-      return next(ApiError.badRequest("User with this email already exists"));
-    }
-    const salt = bcrypt.genSaltSync(10);
-    const hashPassword = await bcrypt.hashSync(password, salt);
-    const user = await User.create({ email, password: hashPassword, role });
-    const token = generateJwt(user.id, user.email, user.role);
-    return res.json({ token });
   }
 
   async login(req, res, next) {
-    const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return next(ApiError.badRequest("User is not exists"));
+    try {
+      const { email, password } = req.body;
+      const userData = await userService.login(email, password);
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.json(userData);
+    } catch (e) {
+      next(e);
     }
-    let comparePassword = bcrypt.compareSync(password, user.password);
-    if (!comparePassword) {
-      return next(ApiError.badRequest("Incorrect password"));
-    }
-    const token = generateJwt(user.id, user.email, user.role);
-    return res.json({ token });
   }
 
-  async checkAuth(req, res, next) {
-    const token = generateJwt(req.user.id, req.user.email, req.user.role);
-    return res.json({ token });
+  async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+      const token = await userService.logout(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.json(token);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async refresh(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+      const userData = await userService.refresh(refreshToken);
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getAllUsers(req, res, next) {
+    try {
+      const users = await userService.getAllUsers();
+      return res.json(users);
+    } catch (e) {
+      next(e);
+    }
   }
 }
 

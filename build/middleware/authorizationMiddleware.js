@@ -1,22 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-function authorizationCheck(req, res, next) {
+const apiError = require("../errors/ApiError");
+const tokenService = require("../services/tokenService");
+module.exports = function (req, res, next) {
     try {
-        const token = req.headers.authorization.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "Not Authorized" });
+        const authorizationHeader = req.headers.authorization;
+        if (!authorizationHeader) {
+            return next(apiError.UnauthorizedError());
         }
-        const decodedToken = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
-        req.user = decodedToken;
+        const accessToken = authorizationHeader.split(" ")[1];
+        if (!accessToken) {
+            return next(apiError.UnauthorizedError());
+        }
+        const userData = tokenService.validateAccessToken(accessToken);
+        if (!userData) {
+            return next(apiError.UnauthorizedError());
+        }
+        req.user = userData;
         next();
     }
-    catch (err) {
-        return res.status(401).json({ message: "Not Authorized" });
+    catch (e) {
+        return next(apiError.UnauthorizedError());
     }
-}
-exports.default = authorizationCheck;
+};
 //# sourceMappingURL=authorizationMiddleware.js.map

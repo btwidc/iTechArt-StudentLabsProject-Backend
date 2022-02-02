@@ -8,58 +8,85 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ApiError_1 = __importDefault(require("../errors/ApiError"));
-const bcrypt_nodejs_1 = __importDefault(require("bcrypt-nodejs"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const { User } = require("../models/models");
-const generateJwt = (id, email, role) => {
-    return jsonwebtoken_1.default.sign({
-        id,
-        email,
-        role,
-    }, process.env.SECRET_KEY, { expiresIn: "24h" });
-};
+const userService = require("../services/userService");
+const { validationResult } = require("express-validator");
+const ApiError = require("../errors/ApiError");
 class UserController {
     registration(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password, role } = req.body;
-            if (!email || !password) {
-                return next(ApiError_1.default.badRequest("Incorrect email or password"));
+            try {
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    return next(ApiError.BadRequest("Validation error", errors.array()));
+                }
+                const { email, password, role } = req.body;
+                const userData = yield userService.registration(email, password, "HR");
+                res.cookie("refreshToken", userData.refreshToken, {
+                    maxAge: 30 * 24 * 60 * 60 * 1000,
+                    httpOnly: true,
+                });
+                return res.json(userData);
             }
-            const checkUser = yield User.findOne({ where: { email } });
-            if (checkUser) {
-                return next(ApiError_1.default.badRequest("User with this email already exists"));
+            catch (e) {
+                next(e);
             }
-            const salt = bcrypt_nodejs_1.default.genSaltSync(10);
-            const hashPassword = yield bcrypt_nodejs_1.default.hashSync(password, salt);
-            const user = yield User.create({ email, password: hashPassword, role });
-            const token = generateJwt(user.id, user.email, user.role);
-            return res.json({ token });
         });
     }
     login(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = req.body;
-            const user = yield User.findOne({ where: { email } });
-            if (!user) {
-                return next(ApiError_1.default.badRequest("User is not exists"));
+            try {
+                const { email, password } = req.body;
+                const userData = yield userService.login(email, password);
+                res.cookie("refreshToken", userData.refreshToken, {
+                    maxAge: 30 * 24 * 60 * 60 * 1000,
+                    httpOnly: true,
+                });
+                return res.json(userData);
             }
-            let comparePassword = bcrypt_nodejs_1.default.compareSync(password, user.password);
-            if (!comparePassword) {
-                return next(ApiError_1.default.badRequest("Incorrect password"));
+            catch (e) {
+                next(e);
             }
-            const token = generateJwt(user.id, user.email, user.role);
-            return res.json({ token });
         });
     }
-    checkAuth(req, res, next) {
+    logout(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = generateJwt(req.user.id, req.user.email, req.user.role);
-            return res.json({ token });
+            try {
+                const { refreshToken } = req.cookies;
+                const token = yield userService.logout(refreshToken);
+                res.clearCookie("refreshToken");
+                return res.json(token);
+            }
+            catch (e) {
+                next(e);
+            }
+        });
+    }
+    refresh(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { refreshToken } = req.cookies;
+                const userData = yield userService.refresh(refreshToken);
+                res.cookie("refreshToken", userData.refreshToken, {
+                    maxAge: 30 * 24 * 60 * 60 * 1000,
+                    httpOnly: true,
+                });
+                return res.json(userData);
+            }
+            catch (e) {
+                next(e);
+            }
+        });
+    }
+    getAllUsers(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield userService.getAllUsers();
+                return res.json(users);
+            }
+            catch (e) {
+                next(e);
+            }
         });
     }
 }

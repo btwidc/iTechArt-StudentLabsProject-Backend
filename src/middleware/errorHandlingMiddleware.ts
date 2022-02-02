@@ -1,9 +1,11 @@
-import ApiError from "../errors/ApiError";
+const ApiError = require("../errors/ApiError");
 
-function errorHandling(err: ApiError, req, res, next) {
-  const status = err.status || 500;
-  const message = err.message || "Unexpected error";
-  return res.status(status).json({ message: message });
-}
-
-export default errorHandling;
+module.exports = function (err, req, res, next) {
+  console.log(err);
+  if (err instanceof ApiError) {
+    return res
+      .status(err.status)
+      .json({ message: err.message, errors: err.errors });
+  }
+  return res.status(500).json({ message: "Unexpected error" });
+};

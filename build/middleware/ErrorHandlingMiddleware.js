@@ -1,9 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function errorHandling(err, req, res, next) {
-    const status = err.status || 500;
-    const message = err.message || "Unexpected error";
-    return res.status(status).json({ message: message });
-}
-exports.default = errorHandling;
+const ApiError = require("../errors/ApiError");
+module.exports = function (err, req, res, next) {
+    console.log(err);
+    if (err instanceof ApiError) {
+        return res
+            .status(err.status)
+            .json({ message: err.message, errors: err.errors });
+    }
+    return res.status(500).json({ message: "Unexpected error" });
+};
 //# sourceMappingURL=errorHandlingMiddleware.js.map

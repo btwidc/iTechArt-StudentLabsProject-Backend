@@ -1,17 +1,23 @@
-import jwt from "jsonwebtoken";
+const apiError = require("../errors/ApiError");
+const tokenService = require("../services/tokenService");
 
-function authorizationCheck(req, res, next) {
+module.exports = function (req, res, next) {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "Not Authorized" });
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      return next(apiError.UnauthorizedError());
     }
-    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decodedToken;
+    const accessToken = authorizationHeader.split(" ")[1];
+    if (!accessToken) {
+      return next(apiError.UnauthorizedError());
+    }
+    const userData = tokenService.validateAccessToken(accessToken);
+    if (!userData) {
+      return next(apiError.UnauthorizedError());
+    }
+    req.user = userData;
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Not Authorized" });
+  } catch (e) {
+    return next(apiError.UnauthorizedError());
   }
-}
-
-export default authorizationCheck;
+};

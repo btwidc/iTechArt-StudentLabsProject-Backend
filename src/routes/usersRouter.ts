@@ -1,10 +1,18 @@
 import { Router } from "express";
-const usersRouter = Router();
 import usersController from "../controllers/userController";
-import authorizationMiddleware from "../middleware/authorizationMiddleware";
+const usersRouter = Router();
+const { body } = require("express-validator");
+const authorizationMiddleware = require("../middleware/authorizationMiddleware");
 
-usersRouter.post("/registration", usersController.registration);
+usersRouter.post(
+  "/registration",
+  body("email").isEmail(),
+  body("password").isLength({ min: 6, max: 32 }),
+  usersController.registration
+);
 usersRouter.post("/login", usersController.login);
-usersRouter.get("/auth", authorizationMiddleware, usersController.checkAuth);
+usersRouter.post("/logout", usersController.logout);
+usersRouter.get("/refresh", usersController.refresh);
+usersRouter.get("/all", authorizationMiddleware, usersController.getAllUsers);
 
 export default usersRouter;

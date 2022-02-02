@@ -15,16 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const index_1 = __importDefault(require("./routes/index"));
-const errorHandlingMiddleware_1 = __importDefault(require("./middleware/errorHandlingMiddleware"));
+const errorHandlingMiddleware = require("./middleware/errorHandlingMiddleware");
 const sequelize = require("./db");
-const models = require("./models/models");
 const port = process.env.PORT || 4000;
 const app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
+app.use(cookie_parser_1.default());
 app.use("/api", index_1.default);
-app.use(errorHandlingMiddleware_1.default);
+app.use(errorHandlingMiddleware);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield sequelize.authenticate();
