@@ -1,8 +1,10 @@
 import { Router } from "express";
 import usersController from "../controllers/userController";
-const usersRouter = Router();
+
 const { body } = require("express-validator");
 const authorizationMiddleware = require("../middleware/authorizationMiddleware");
+
+const usersRouter = Router();
 
 usersRouter.post(
   "/registration",
@@ -11,8 +13,7 @@ usersRouter.post(
   usersController.registration
 );
 usersRouter.post("/login", usersController.login);
-usersRouter.post("/logout", usersController.logout);
-usersRouter.get("/refresh", usersController.refresh);
-usersRouter.get("/all", authorizationMiddleware, usersController.getAllUsers);
+// usersRouter.post("/logout", usersController.logout);
+usersRouter.get("/refresh", authorizationMiddleware, usersController.refresh);
 
 export default usersRouter;

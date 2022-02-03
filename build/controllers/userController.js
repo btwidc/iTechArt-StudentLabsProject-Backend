@@ -22,10 +22,6 @@ class UserController {
                 }
                 const { email, password, role } = req.body;
                 const userData = yield userService.registration(email, password, "HR");
-                res.cookie("refreshToken", userData.refreshToken, {
-                    maxAge: 30 * 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                });
                 return res.json(userData);
             }
             catch (e) {
@@ -38,10 +34,6 @@ class UserController {
             try {
                 const { email, password } = req.body;
                 const userData = yield userService.login(email, password);
-                res.cookie("refreshToken", userData.refreshToken, {
-                    maxAge: 30 * 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                });
                 return res.json(userData);
             }
             catch (e) {
@@ -49,40 +41,22 @@ class UserController {
             }
         });
     }
-    logout(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { refreshToken } = req.cookies;
-                const token = yield userService.logout(refreshToken);
-                res.clearCookie("refreshToken");
-                return res.json(token);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
+    // async logout(req, res, next) {
+    //   try {
+    //     const { refreshToken } = req.cookies;
+    //     const token = await userService.logout(refreshToken);
+    //     res.clearCookie("refreshToken");
+    //     return res.json(token);
+    //   } catch (e) {
+    //     next(e);
+    //   }
+    // }
     refresh(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { refreshToken } = req.cookies;
                 const userData = yield userService.refresh(refreshToken);
-                res.cookie("refreshToken", userData.refreshToken, {
-                    maxAge: 30 * 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                });
                 return res.json(userData);
-            }
-            catch (e) {
-                next(e);
-            }
-        });
-    }
-    getAllUsers(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const users = yield userService.getAllUsers();
-                return res.json(users);
             }
             catch (e) {
                 next(e);

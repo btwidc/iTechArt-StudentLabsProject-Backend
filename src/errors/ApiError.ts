@@ -1,7 +1,7 @@
 module.exports = class ApiError extends Error {
-  status;
+  status: number;
   errors;
-  constructor(status, message, errors = []) {
+  constructor(status: number, message: string, errors = []) {
     super(message);
     this.status = status;
     this.errors = errors;
@@ -13,5 +13,9 @@ module.exports = class ApiError extends Error {
 
   static BadRequest(message, errors = []) {
     return new ApiError(400, message, errors);
+  }
+
+  static NotFoundUserError() {
+    return new ApiError(404, "User with this email was not found");
   }
 };

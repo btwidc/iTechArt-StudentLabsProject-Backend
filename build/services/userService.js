@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const tokenService = require("../services/tokenService");
 const bcrypt_nodejs_1 = __importDefault(require("bcrypt-nodejs"));
 const { User } = require("../models/models");
-const tokenService = require("../services/tokenService");
 const UserDto = require("../dtos/UserDto");
 const ApiError = require("../errors/ApiError");
 class UserService {
@@ -37,7 +37,7 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User.findOne({ where: { email } });
             if (!user) {
-                throw ApiError.BadRequest("User with this email was not found");
+                throw ApiError.NotFoundUserError();
             }
             const isPasswordEquals = yield bcrypt_nodejs_1.default.compareSync(password, user.password);
             if (!isPasswordEquals) {
@@ -69,11 +69,6 @@ class UserService {
             const tokens = tokenService.generateTokens(Object.assign({}, userDto));
             yield tokenService.saveToken(userDto.id, tokens.refreshToken);
             return Object.assign(Object.assign({}, tokens), { user: userDto });
-        });
-    }
-    getAllUsers() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield User.findAll();
         });
     }
 }

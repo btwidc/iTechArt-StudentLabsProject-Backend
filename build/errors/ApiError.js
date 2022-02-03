@@ -10,5 +10,8 @@ module.exports = class ApiError extends Error {
     static BadRequest(message, errors = []) {
         return new ApiError(400, message, errors);
     }
+    static NotFoundUserError() {
+        return new ApiError(404, "User with this email was not found");
+    }
 };
 //# sourceMappingURL=ApiError.js.map
