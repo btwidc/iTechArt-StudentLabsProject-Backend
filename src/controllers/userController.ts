@@ -1,7 +1,7 @@
 const userService = require("../services/userService");
-
 const { validationResult } = require("express-validator");
 const ApiError = require("../errors/ApiError");
+const tokenService = require("../services/tokenService");
 
 class UserController {
   async registration(req, res, next) {
@@ -31,22 +31,20 @@ class UserController {
     }
   }
 
-  // async logout(req, res, next) {
-  //   try {
-  //     const { refreshToken } = req.cookies;
-  //     const token = await userService.logout(refreshToken);
-  //     res.clearCookie("refreshToken");
-  //     return res.json(token);
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
-
   async refresh(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
-      const userData = await userService.refresh(refreshToken);
-      return res.json(userData);
+      const user = req.user;
+      console.log(user);
+      const token = tokenService.generateAccessToken(user);
+      return res.json(token);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async test(req, res, next) {
+    try {
+      return res.json("Good");
     } catch (e) {
       next(e);
     }

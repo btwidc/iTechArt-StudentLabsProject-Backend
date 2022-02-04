@@ -10,7 +10,7 @@ const authorizationMiddleware = require("../middleware/authorizationMiddleware")
 const usersRouter = express_1.Router();
 usersRouter.post("/registration", body("email").isEmail(), body("password").isLength({ min: 6, max: 32 }), userController_1.default.registration);
 usersRouter.post("/login", userController_1.default.login);
-// usersRouter.post("/logout", usersController.logout);
 usersRouter.get("/refresh", authorizationMiddleware, userController_1.default.refresh);
+usersRouter.get("/test", authorizationMiddleware, userController_1.default.test);
 exports.default = usersRouter;
 //# sourceMappingURL=usersRouter.js.map

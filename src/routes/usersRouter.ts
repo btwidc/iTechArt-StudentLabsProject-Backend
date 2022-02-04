@@ -13,7 +13,7 @@ usersRouter.post(
   usersController.registration
 );
 usersRouter.post("/login", usersController.login);
-// usersRouter.post("/logout", usersController.logout);
 usersRouter.get("/refresh", authorizationMiddleware, usersController.refresh);
+usersRouter.get("/test", authorizationMiddleware, usersController.test);
 
 export default usersRouter;

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const userService = require("../services/userService");
 const { validationResult } = require("express-validator");
 const ApiError = require("../errors/ApiError");
+const tokenService = require("../services/tokenService");
 class UserController {
     registration(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,22 +42,23 @@ class UserController {
             }
         });
     }
-    // async logout(req, res, next) {
-    //   try {
-    //     const { refreshToken } = req.cookies;
-    //     const token = await userService.logout(refreshToken);
-    //     res.clearCookie("refreshToken");
-    //     return res.json(token);
-    //   } catch (e) {
-    //     next(e);
-    //   }
-    // }
     refresh(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { refreshToken } = req.cookies;
-                const userData = yield userService.refresh(refreshToken);
-                return res.json(userData);
+                const user = req.user;
+                console.log(user);
+                const token = tokenService.generateAccessToken(user);
+                return res.json(token);
+            }
+            catch (e) {
+                next(e);
+            }
+        });
+    }
+    test(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return res.json("Good");
             }
             catch (e) {
                 next(e);
