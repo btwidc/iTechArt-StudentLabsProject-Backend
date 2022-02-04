@@ -43,27 +43,25 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async refresh(email: string) {
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      throw ApiError.NotFoundUserError();
+  async logout(refreshToken) {
+    return await tokenService.removeToken(refreshToken);
+  }
+
+  async refresh(refreshToken) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError();
     }
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError();
+    }
+    const user = await User.findOne({ where: { id: userData.id } });
     const userDto = new UserDto(user);
-    return tokenService.generateAccessToken({ ...userDto });
-    // const userById = await Token.update({refreshToken: },{where: {userId: id}});
-    // if (!userById) {
-    //   throw ApiError.UnauthorizedError();
-    // }
-    //
-    // const userData = tokenService.validateRefreshToken();
-    //
-    // const user = await User.findOne({ where: { id: userData.id } });
-    // const userDto = new UserDto(user);
-    //
-    // const tokens = tokenService.generateTokens({ ...userDto });
-    // await tokenService.saveToken(userDto.id, tokens.refreshToken);
-    //
-    // return { ...tokens, user: userDto };
+    const newAccessToken = tokenService.generateAccessToken({ ...userDto });
+
+    await tokenService.saveToken(userDto.id, newAccessToken);
+    return { newAccessToken, user: userDto };
   }
 }
 

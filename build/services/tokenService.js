@@ -60,6 +60,11 @@ class TokenService {
             return yield Token.destroy({ where: { refreshToken } });
         });
     }
+    findToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield Token.findOne({ where: { refreshToken } });
+        });
+    }
 }
 module.exports = new TokenService();
 //# sourceMappingURL=tokenService.js.map

@@ -47,6 +47,10 @@ class TokenService {
   async removeToken(refreshToken) {
     return await Token.destroy({ where: { refreshToken } });
   }
+
+  async findToken(refreshToken) {
+    return await Token.findOne({ where: { refreshToken } });
+  }
 }
 
 module.exports = new TokenService();
