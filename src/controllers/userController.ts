@@ -32,7 +32,7 @@ class UserController {
 
   async logout(req, res, next) {
     try {
-      const { refreshToken } = req.body;
+      const refreshToken = req.refreshToken;
       await userService.logout(refreshToken);
       return null;
     } catch (e) {
@@ -42,7 +42,7 @@ class UserController {
 
   async refresh(req, res, next) {
     try {
-      const { refreshToken } = req.body;
+      const refreshToken = req.refreshToken;
       const token = await userService.refresh(refreshToken);
       return res.json(token);
     } catch (e) {
