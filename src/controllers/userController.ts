@@ -33,8 +33,8 @@ class UserController {
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.body;
-      const data = await userService.logout(refreshToken);
-      return res.json(data);
+      await userService.logout(refreshToken);
+      return null;
     } catch (e) {
       next(e);
     }
