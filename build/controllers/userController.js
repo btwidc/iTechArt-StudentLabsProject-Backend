@@ -44,9 +44,9 @@ class UserController {
     logout(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { refreshToken } = req.body;
-                const data = yield userService.logout(refreshToken);
-                return res.json(data);
+                const refreshToken = req.body.refreshToken;
+                yield userService.logout(refreshToken);
+                return res.json("Successfully logout");
             }
             catch (e) {
                 next(e);
@@ -56,7 +56,7 @@ class UserController {
     refresh(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { refreshToken } = req.body;
+                const refreshToken = req.body.refreshToken;
                 const token = yield userService.refresh(refreshToken);
                 return res.json(token);
             }

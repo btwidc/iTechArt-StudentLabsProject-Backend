@@ -57,12 +57,12 @@ class TokenService {
     }
     removeToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield Token.destroy({ where: { refreshToken } });
+            return yield Token.destroy({ where: { refreshToken: refreshToken } });
         });
     }
     findToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield Token.findOne({ where: { refreshToken } });
+            return yield Token.findOne({ where: { refreshToken: refreshToken } });
         });
     }
 }

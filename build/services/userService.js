@@ -60,14 +60,15 @@ class UserService {
                 throw ApiError.UnauthorizedError();
             }
             const userData = tokenService.validateRefreshToken(refreshToken);
+            console.log(userData);
             const tokenFromDb = yield tokenService.findToken(refreshToken);
+            console.log(tokenFromDb);
             if (!userData || !tokenFromDb) {
                 throw ApiError.UnauthorizedError();
             }
             const user = yield User.findOne({ where: { id: userData.id } });
             const userDto = new UserDto(user);
             const newAccessToken = tokenService.generateAccessToken(Object.assign({}, userDto));
-            yield tokenService.saveToken(userDto.id, newAccessToken);
             return { newAccessToken, user: userDto };
         });
     }
