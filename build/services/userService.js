@@ -60,9 +60,7 @@ class UserService {
                 throw ApiError.UnauthorizedError();
             }
             const userData = tokenService.validateRefreshToken(refreshToken);
-            console.log(userData);
             const tokenFromDb = yield tokenService.findToken(refreshToken);
-            console.log(tokenFromDb);
             if (!userData || !tokenFromDb) {
                 throw ApiError.UnauthorizedError();
             }
