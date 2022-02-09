@@ -52,14 +52,13 @@ class UserService {
       throw ApiError.UnauthorizedError();
     }
     const userData = tokenService.validateRefreshToken(refreshToken);
-    console.log(userData);
     const tokenFromDb = await tokenService.findToken(refreshToken);
-    console.log(tokenFromDb);
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
     const user = await User.findOne({ where: { id: userData.id } });
     const userDto = new UserDto(user);
+
     const newAccessToken = tokenService.generateAccessToken({ ...userDto });
     return { newAccessToken, user: userDto };
   }
