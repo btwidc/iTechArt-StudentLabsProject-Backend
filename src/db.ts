@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = new Sequelize(
+const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
   process.env.DB_PASSWORD,
@@ -14,5 +14,7 @@ module.exports = new Sequelize(
         rejectUnauthorized: false,
       },
     },
-  }
+  },
 );
+
+export default sequelize;

@@ -1,9 +1,10 @@
-const userService = require("../services/userService");
-const { validationResult } = require("express-validator");
-const ApiError = require("../errors/ApiError");
+import userService from "../services/userService";
+import { validationResult } from "express-validator";
+import ApiError from "../errors/ApiError";
+import AuthResponseType from "../types/AuthResponseType";
 
 class UserController {
-  async registration(req, res, next) {
+  public async registration(req, res, next): Promise<AuthResponseType> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -19,7 +20,7 @@ class UserController {
     }
   }
 
-  async login(req, res, next) {
+  public async login(req, res, next): Promise<AuthResponseType> {
     try {
       const { email, password } = req.body;
       const userData = await userService.login(email, password);
@@ -30,7 +31,7 @@ class UserController {
     }
   }
 
-  async logout(req, res, next) {
+  public async logout(req, res, next): Promise<string> {
     try {
       const refreshToken = req.body.refreshToken;
       await userService.logout(refreshToken);
@@ -40,19 +41,11 @@ class UserController {
     }
   }
 
-  async refresh(req, res, next) {
+  public async refresh(req, res, next): Promise<string> {
     try {
       const refreshToken = req.body.refreshToken;
       const token = await userService.refresh(refreshToken);
       return res.json(token);
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  async test(req, res, next) {
-    try {
-      return res.json("Good");
     } catch (e) {
       next(e);
     }

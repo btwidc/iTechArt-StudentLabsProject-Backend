@@ -1,41 +1,44 @@
 import jwt from "jsonwebtoken";
 
-const { Token } = require("../models/models");
+import Token from "../models/Token";
+import TokensResponse from "../types/TokensResponse";
+import ApiError from "../errors/ApiError";
 
 class TokenService {
-  generateTokens(payload) {
+  public generateTokens(payload): TokensResponse {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
       expiresIn: "30s",
     });
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
       expiresIn: "2m",
     });
-    return { accessToken, refreshToken };
+    const tokens = { accessToken, refreshToken };
+    return { ...tokens };
   }
 
-  generateAccessToken(payload) {
+  public generateAccessToken(payload): string {
     return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
       expiresIn: "30s",
     });
   }
 
-  validateAccessToken(token) {
+  public validateAccessToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     } catch (e) {
-      return null;
+      return ApiError.UnauthorizedError();
     }
   }
 
-  validateRefreshToken(token) {
+  public validateRefreshToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     } catch (e) {
-      return null;
+      return ApiError.UnauthorizedError();
     }
   }
 
-  async saveToken(userId: number, refreshToken) {
+  public async saveToken(userId: number, refreshToken: string) {
     const tokenData = await Token.findOne({ where: { userId } });
     if (tokenData) {
       tokenData.refreshToken = refreshToken;
@@ -44,13 +47,13 @@ class TokenService {
     return await Token.create({ userId, refreshToken });
   }
 
-  async removeToken(refreshToken: string) {
-    return await Token.destroy({ where: { refreshToken: refreshToken } });
+  public async removeToken(refreshToken: string): Promise<string> {
+    return await Token.destroy({ where: { refreshToken } });
   }
 
-  async findToken(refreshToken: string) {
-    return await Token.findOne({ where: { refreshToken: refreshToken } });
+  public async findToken(refreshToken: string): Promise<string> {
+    return await Token.findOne({ where: { refreshToken } });
   }
 }
 
-module.exports = new TokenService();
+export default new TokenService();

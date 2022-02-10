@@ -1,7 +1,7 @@
-const apiError = require("../errors/ApiError");
-const tokenService = require("../services/tokenService");
+import apiError from "../errors/ApiError";
+import tokenService from "../services/tokenService";
 
-module.exports = function (req, res, next) {
+const AuthMiddleware = (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
@@ -24,3 +24,5 @@ module.exports = function (req, res, next) {
     return next(apiError.UnauthorizedError());
   }
 };
+
+export default AuthMiddleware;

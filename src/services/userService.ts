@@ -1,13 +1,18 @@
-const tokenService = require("../services/tokenService");
-
+import tokenService from "../services/tokenService";
 import bcrypt from "bcrypt-nodejs";
 
-const { User } = require("../models/models");
-const UserDto = require("../dtos/UserDto");
-const ApiError = require("../errors/ApiError");
+import User from "../models/User";
+import UserDto from "../dtos/UserDto";
+import ApiError from "../errors/ApiError";
+import AuthResponseType from "../types/AuthResponseType";
+import RefreshResponse from "../types/RefreshResponse";
 
 class UserService {
-  async registration(email: string, password: string, role: string) {
+  public async registration(
+    email: string,
+    password: string,
+    role: string,
+  ): Promise<AuthResponseType> {
     const candidate = await User.findOne({ where: { email } });
     if (candidate) {
       throw ApiError.BadRequest(`User with email ${email} already exists`);
@@ -25,7 +30,10 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async login(email: string, password: string) {
+  public async login(
+    email: string,
+    password: string,
+  ): Promise<AuthResponseType> {
     const user = await User.findOne({ where: { email } });
     if (!user) {
       throw ApiError.NotFoundUserError();
@@ -43,11 +51,11 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async logout(refreshToken: string) {
+  public async logout(refreshToken: string): Promise<string> {
     return await tokenService.removeToken(refreshToken);
   }
 
-  async refresh(refreshToken: string) {
+  public async refresh(refreshToken: string): Promise<RefreshResponse> {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
@@ -64,4 +72,4 @@ class UserService {
   }
 }
 
-module.exports = new UserService();
+export default new UserService();

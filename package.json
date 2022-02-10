@@ -10,7 +10,8 @@
     "build": "rimraf ./build && tsc",
     "start": "nodemon build/index.js",
     "tsc": "./node_modules/typescript/bin/tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tslint": "tslint src/**/*.ts{,x}"
   },
   "keywords": [
     "backend"
@@ -23,11 +24,11 @@
     "nodemon": "^2.0.15",
     "prettier": "2.5.1",
     "rimraf": "^3.0.2",
-    "tslint": "^5.12.1",
-    "typescript": "^3.9.10"
+    "tslint": "^5.12.1"
   },
   "dependencies": {
     "@types/node": "^17.0.17",
+    "@types/sequelize": "^4.28.11",
     "bcrypt-nodejs": "^0.0.3",
     "cors": "^2.8.5",
     "dotenv": "^14.3.2",
@@ -35,6 +36,10 @@
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.14.1"
+    "sequelize": "^6.14.1",
+    "typescript": "^4.5.5"
+  },
+  "prettier": {
+    "trailingComma": "all"
   }
 }
