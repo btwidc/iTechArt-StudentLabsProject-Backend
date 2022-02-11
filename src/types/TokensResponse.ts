@@ -1,6 +1,6 @@
 interface TokensResponse {
-  accessToken: string;
-  refreshToken: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export default TokensResponse;
