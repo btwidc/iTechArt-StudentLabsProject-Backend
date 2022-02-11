@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import Token from "../models/Token";
 import TokensResponse from "../types/TokensResponse";
 import ApiError from "../errors/ApiError";
+import ValidateResponse from "../types/ValidateResponse";
 
 class TokenService {
   public generateTokens(payload): TokensResponse {
@@ -22,7 +23,7 @@ class TokenService {
     });
   }
 
-  public validateAccessToken(token) {
+  public validateAccessToken(token: string): ValidateResponse | ApiError {
     try {
       return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     } catch (e) {
@@ -30,7 +31,7 @@ class TokenService {
     }
   }
 
-  public validateRefreshToken(token) {
+  public validateRefreshToken(token: string): ValidateResponse | ApiError {
     try {
       return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     } catch (e) {
@@ -38,7 +39,10 @@ class TokenService {
     }
   }
 
-  public async saveToken(userId: number, refreshToken: string) {
+  public async saveToken(
+    userId: number,
+    refreshToken: string,
+  ): Promise<typeof Token> {
     const tokenData = await Token.findOne({ where: { userId } });
     if (tokenData) {
       tokenData.refreshToken = refreshToken;
@@ -47,11 +51,11 @@ class TokenService {
     return await Token.create({ userId, refreshToken });
   }
 
-  public async removeToken(refreshToken: string): Promise<string> {
+  public async removeToken(refreshToken: string): Promise<number> {
     return await Token.destroy({ where: { refreshToken } });
   }
 
-  public async findToken(refreshToken: string): Promise<string> {
+  public async findToken(refreshToken: string): Promise<typeof Token | null> {
     return await Token.findOne({ where: { refreshToken } });
   }
 }

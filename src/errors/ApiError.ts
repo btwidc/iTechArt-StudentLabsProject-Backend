@@ -1,13 +1,13 @@
 class ApiError extends Error {
-  public static UnauthorizedError(): ApiError {
+  public static UnauthorizedError() {
     return new ApiError(401, "User is not authorized");
   }
 
-  public static BadRequest(message, errors = []): ApiError {
+  public static BadRequest(message, errors = []) {
     return new ApiError(400, message, errors);
   }
 
-  public static NotFoundUserError(): ApiError {
+  public static NotFoundUserError() {
     return new ApiError(404, "User with this email was not found");
   }
 

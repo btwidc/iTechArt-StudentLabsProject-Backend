@@ -51,7 +51,7 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  public async logout(refreshToken: string): Promise<string> {
+  public async logout(refreshToken: string): Promise<number> {
     return await tokenService.removeToken(refreshToken);
   }
 
@@ -64,11 +64,12 @@ class UserService {
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
-    const user = await User.findOne({ where: { id: userData.id } });
-    const userDto = new UserDto(user);
-
-    const newAccessToken = tokenService.generateAccessToken({ ...userDto });
-    return { newAccessToken, user: userDto };
+    if (!(userData instanceof ApiError)) {
+      const user = await User.findOne({ where: { id: userData.id } });
+      const userDto = new UserDto(user);
+      const newAccessToken = tokenService.generateAccessToken({ ...userDto });
+      return { newAccessToken, user: userDto };
+    }
   }
 }
 

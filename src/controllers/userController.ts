@@ -45,7 +45,7 @@ class UserController {
     try {
       const refreshToken = req.body.refreshToken;
       const token = await userService.refresh(refreshToken);
-      return res.json(token);
+      return res.json(token.newAccessToken);
     } catch (e) {
       next(e);
     }
