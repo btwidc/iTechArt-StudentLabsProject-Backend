@@ -10,7 +10,7 @@ const port = process.env.PORT || 4000;
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.WEB_CLIENT_URL }));
 app.use(express.json());
 
 app.use("/api", router);
