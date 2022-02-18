@@ -1,5 +1,6 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
+import User from './User';
 
 const Token = sequelize.define(
     'token',
@@ -16,9 +17,10 @@ const Token = sequelize.define(
             allowNull: false,
             required: true,
         },
-        userId: { type: DataTypes.INTEGER, allowNull: false, required: true },
     },
     { timestamps: false },
 );
+
+Token.belongsTo(User);
 
 export default Token;

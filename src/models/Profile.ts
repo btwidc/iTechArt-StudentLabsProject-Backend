@@ -1,5 +1,6 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
+import User from './User';
 
 const Profile = sequelize.define(
     'profile',
@@ -8,11 +9,6 @@ const Profile = sequelize.define(
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false,
-            required: true,
-        },
-        userId: {
-            type: DataTypes.INTEGER,
             allowNull: false,
             required: true,
         },
@@ -56,5 +52,7 @@ const Profile = sequelize.define(
     },
     { timestamps: false },
 );
+
+Profile.belongsTo(User);
 
 export default Profile;

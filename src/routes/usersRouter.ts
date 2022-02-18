@@ -16,4 +16,20 @@ usersRouter.post('/login', usersController.login);
 usersRouter.post('/logout', usersController.logout);
 usersRouter.post('/refresh', usersController.refresh);
 
+usersRouter.get(
+    '/profile',
+    authorizationMiddleware,
+    usersController.getUserProfileInfo,
+);
+usersRouter.post(
+    '/profile',
+    body('name').isString(),
+    body('surname').isString(),
+    body('email').isEmail(),
+    body('ageExperience').isNumeric().isLength({ max: 2 }),
+    body('department').isString(),
+    body('summary').isString(),
+    usersController.addUserProfileInfo,
+);
+
 export default usersRouter;
