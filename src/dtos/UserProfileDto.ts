@@ -3,7 +3,7 @@ class UserProfileDto {
     public surname: string;
     public email: string;
     public skype: string;
-    public ageExperience: string;
+    public ageExperience: number;
     public department: string;
     public summary: string;
     public userId: number;

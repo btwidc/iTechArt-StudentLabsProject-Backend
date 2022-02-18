@@ -1,9 +1,11 @@
 import User from '../models/User';
 import Profile from '../models/Profile';
 
-import UserProfileDto from '../dtos/UserProfileDto';
-import UserProfileInfo from '../types/UserProfileInfo';
 import UserDto from '../dtos/UserDto';
+import UserProfileDto from '../dtos/UserProfileDto';
+
+import UserProfileInfo from '../types/UserProfileInfo';
+
 import ApiError from '../errors/ApiError';
 
 class ProfileService {
@@ -12,7 +14,7 @@ class ProfileService {
         surname: string,
         email: string,
         skype: string,
-        ageExperience: string,
+        ageExperience: number,
         department: string,
         summary: string,
     ): Promise<UserProfileInfo> {
@@ -46,7 +48,7 @@ class ProfileService {
             throw ApiError.BadRequest(`Can't get user profile`);
         }
 
-        return userProfile;
+        return new UserProfileDto(userProfile);
     }
 }
 

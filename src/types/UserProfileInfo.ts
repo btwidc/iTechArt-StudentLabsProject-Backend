@@ -3,7 +3,7 @@ interface UserProfileInfo {
     surname: string;
     email: string;
     skype: string;
-    ageExperience: string;
+    ageExperience: number;
     department: string;
     summary: string;
     userId: number;

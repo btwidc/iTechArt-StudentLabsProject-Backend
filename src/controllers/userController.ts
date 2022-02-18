@@ -61,13 +61,14 @@ class UserController {
     }
 
     public async addUserProfileInfo(req, res, next): Promise<UserProfileInfo> {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return next(
-                ApiError.BadRequest('Validation error', errors.array()),
-            );
-        }
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(
+                    ApiError.BadRequest('Validation error', errors.array()),
+                );
+            }
+
             const {
                 name,
                 surname,
@@ -77,6 +78,7 @@ class UserController {
                 department,
                 summary,
             } = req.body;
+
             const userProfileData = await profileService.addUserProfileInfo(
                 name,
                 surname,
@@ -86,6 +88,7 @@ class UserController {
                 department,
                 summary,
             );
+
             return res.json(userProfileData);
         } catch (e) {
             next(e);
@@ -96,6 +99,7 @@ class UserController {
         try {
             const id = req.user.id;
             const userProfileData = await profileService.getUserProfileInfo(id);
+
             return res.json(userProfileData);
         } catch (e) {
             next(e);
