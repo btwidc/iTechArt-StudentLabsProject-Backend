@@ -28,7 +28,7 @@ class UserController {
                 'HR',
             );
 
-            return res.json(userData);
+            res.json(userData);
         } catch (e) {
             next(e);
         }
@@ -38,12 +38,12 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<AuthResponseType> {
+    ): Promise<Promise<AuthResponseType> | Promise<void>> {
         try {
             const { email, password } = req.body;
             const userData = await userService.login(email, password);
 
-            return res.json(userData);
+            res.json(userData);
         } catch (e) {
             next(e);
         }
@@ -53,11 +53,11 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<string> {
+    ): Promise<Promise<string> | Promise<void>> {
         try {
             const refreshToken = req.body.refreshToken;
             await userService.logout(refreshToken);
-            return res.json('Successfully logout');
+            res.json('Successfully logout');
         } catch (e) {
             next(e);
         }
@@ -67,11 +67,11 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<string> {
+    ): Promise<Promise<string> | Promise<void>> {
         try {
             const refreshToken = req.body.refreshToken;
             const token = await userService.refresh(refreshToken);
-            return res.json(token.newAccessToken);
+            res.json(token.newAccessToken);
         } catch (e) {
             next(e);
         }
@@ -110,7 +110,7 @@ class UserController {
                 summary,
             );
 
-            return res.json(userProfileData);
+            res.json(userProfileData);
         } catch (e) {
             next(e);
         }
@@ -120,12 +120,12 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<UserProfileInfo> {
+    ): Promise<Promise<UserProfileInfo> | Promise<void>> {
         try {
             const id = req.user.id;
             const userProfileData = await profileService.getUserProfileInfo(id);
 
-            return res.json(userProfileData);
+            res.json(userProfileData);
         } catch (e) {
             next(e);
         }
