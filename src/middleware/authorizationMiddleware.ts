@@ -1,14 +1,9 @@
 import apiError from '../errors/ApiError';
 import tokenService from '../services/tokenService';
-import { Response, NextFunction } from 'express';
-import { RequestAuthMiddleware } from '../types/RequestAuthMiddleware';
+import { Response, NextFunction, Request } from 'express';
 import ApiError from '../errors/ApiError';
 
-const AuthMiddleware = (
-    req: RequestAuthMiddleware,
-    res: Response,
-    next: NextFunction,
-) => {
+const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         const authorizationHeader = req.headers.authorization;
         if (!authorizationHeader) {

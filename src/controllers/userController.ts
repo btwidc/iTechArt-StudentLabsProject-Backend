@@ -5,9 +5,14 @@ import { validationResult } from 'express-validator';
 import ApiError from '../errors/ApiError';
 import AuthResponseType from '../types/AuthResponseType';
 import UserProfileInfo from '../types/UserProfileInfo';
+import { NextFunction, Request, Response } from 'express';
 
 class UserController {
-    public async registration(req, res, next): Promise<AuthResponseType> {
+    public async registration(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<Promise<AuthResponseType> | Promise<void>> {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -17,7 +22,7 @@ class UserController {
             }
 
             const { email, password, role } = req.body;
-            const userData = await userService.registration(
+            const userData: AuthResponseType = await userService.registration(
                 email,
                 password,
                 'HR',
@@ -29,7 +34,11 @@ class UserController {
         }
     }
 
-    public async login(req, res, next): Promise<AuthResponseType> {
+    public async login(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<AuthResponseType> {
         try {
             const { email, password } = req.body;
             const userData = await userService.login(email, password);
@@ -40,7 +49,11 @@ class UserController {
         }
     }
 
-    public async logout(req, res, next): Promise<string> {
+    public async logout(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<string> {
         try {
             const refreshToken = req.body.refreshToken;
             await userService.logout(refreshToken);
@@ -50,7 +63,11 @@ class UserController {
         }
     }
 
-    public async refresh(req, res, next): Promise<string> {
+    public async refresh(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<string> {
         try {
             const refreshToken = req.body.refreshToken;
             const token = await userService.refresh(refreshToken);
@@ -60,7 +77,11 @@ class UserController {
         }
     }
 
-    public async addUserProfileInfo(req, res, next): Promise<UserProfileInfo> {
+    public async addUserProfileInfo(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<Promise<UserProfileInfo> | Promise<void>> {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -95,7 +116,11 @@ class UserController {
         }
     }
 
-    public async getUserProfileInfo(req, res, next): Promise<UserProfileInfo> {
+    public async getUserProfileInfo(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<UserProfileInfo> {
         try {
             const id = req.user.id;
             const userProfileData = await profileService.getUserProfileInfo(id);
