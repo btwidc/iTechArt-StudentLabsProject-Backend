@@ -12,7 +12,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<AuthResponseType> | Promise<void>> {
+    ): Promise<AuthResponseType | void> {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -38,7 +38,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<AuthResponseType> | Promise<void>> {
+    ): Promise<AuthResponseType | void> {
         try {
             const { email, password } = req.body;
             const userData = await userService.login(email, password);
@@ -53,7 +53,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<string> | Promise<void>> {
+    ): Promise<string | void> {
         try {
             const refreshToken = req.body.refreshToken;
             await userService.logout(refreshToken);
@@ -67,7 +67,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<string> | Promise<void>> {
+    ): Promise<string | void> {
         try {
             const refreshToken = req.body.refreshToken;
             const token = await userService.refresh(refreshToken);
@@ -81,7 +81,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<UserProfileInfo> | Promise<void>> {
+    ): Promise<UserProfileInfo | void> {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -120,7 +120,7 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<Promise<UserProfileInfo> | Promise<void>> {
+    ): Promise<UserProfileInfo | void> {
         try {
             const id = req.user.id;
             const userProfileData = await profileService.getUserProfileInfo(id);
