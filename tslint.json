@@ -4,6 +4,7 @@
     "jsRules": {},
     "rules": {
         "new-parens": true,
+        "quotemark": false,
         "no-arg": true,
         "no-bitwise": true,
         "object-literal-sort-keys": false,

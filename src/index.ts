@@ -5,7 +5,7 @@ import cors from 'cors';
 import router from './routes/index';
 import sequelize from './db';
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware';
-
+import synchronizeModels from './models/synchronizeModels';
 const port = process.env.PORT || 4000;
 
 const app = express();
@@ -19,8 +19,8 @@ app.use(errorHandlingMiddleware);
 const start = async () => {
     try {
         await sequelize.authenticate();
-        await sequelize.sync();
-        app.listen(port, () => {
+        await synchronizeModels();
+        await app.listen(port, () => {
             console.error(`App listening on port ${port}`);
         });
     } catch (e) {

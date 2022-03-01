@@ -17,9 +17,10 @@ const Token = sequelize.define(
             allowNull: false,
             required: true,
         },
-        userId: { type: DataTypes.INTEGER, allowNull: false, required: true },
     },
     { timestamps: false },
 );
+
+Token.belongsTo(User);
 
 export default Token;
