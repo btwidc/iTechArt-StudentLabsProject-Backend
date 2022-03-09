@@ -30,6 +30,9 @@ class CandidatesController {
         technology,
       } = req.body;
 
+      const file = req.files.file;
+      file.mv(`public/docs/CV(${email})`);
+
       const candidateInfo = await candidatesService.addCandidateInfo(
         name,
         surname,
