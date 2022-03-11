@@ -7,9 +7,19 @@ import authorizationMiddleware from '../middleware/authorizationMiddleware';
 const candidatesRouter = Router();
 
 candidatesRouter.get(
+  '/list',
+  authorizationMiddleware,
+  candidatesController.getCandidatesList,
+);
+candidatesRouter.get(
   '/info/:id',
   authorizationMiddleware,
   candidatesController.getCandidateInfo,
+);
+candidatesRouter.get(
+  '/download/:id',
+  authorizationMiddleware,
+  candidatesController.downloadCandidateCV,
 );
 candidatesRouter.post(
   '/add',
@@ -23,5 +33,7 @@ candidatesRouter.post(
   body('technology').isString(),
   candidatesController.addCandidateInfo,
 );
+
+
 
 export default candidatesRouter;

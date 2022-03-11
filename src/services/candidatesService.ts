@@ -35,6 +35,16 @@ class CandidatesService {
     return new CandidateDto(candidateData);
   }
 
+  public async getCandidatesList(): Promise<Array<CandidateInfo>> {
+    const candidatesList = await Candidate.findAll();
+
+    if (!candidatesList) {
+      throw ApiError.BadRequest(`Can't get candidates list`);
+    }
+
+    return candidatesList;
+  }
+
   public async getCandidateInfo(id: string): Promise<CandidateInfo> {
     const candidateInfo = await Candidate.findOne({ where: { id } });
 
