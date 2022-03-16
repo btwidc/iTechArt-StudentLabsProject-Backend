@@ -1,10 +1,14 @@
 import ValidateResponse from './src/types/ValidateResponse';
 
 declare global {
-  namespace Express {
-    interface Request {
-      user: ValidateResponse;
-      files: any;
+    namespace Express {
+        interface Request {
+            user: ValidateResponse;
+            files: File;
+        }
     }
-  }
+    interface File {
+        cv: File;
+        mv(filePath: string);
+    }
 }

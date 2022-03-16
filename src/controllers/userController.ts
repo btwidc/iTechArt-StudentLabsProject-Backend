@@ -6,6 +6,7 @@ import ApiError from '../errors/ApiError';
 import AuthResponseType from '../types/AuthResponseType';
 import UserProfileInfo from '../types/UserProfileInfo';
 import { NextFunction, Request, Response } from 'express';
+import RefreshResponse from '../types/RefreshResponse';
 
 class UserController {
     public async registration(
@@ -67,11 +68,11 @@ class UserController {
         req: Request,
         res: Response,
         next: NextFunction,
-    ): Promise<string | void> {
+    ): Promise<RefreshResponse | void> {
         try {
             const refreshToken = req.body.refreshToken;
-            const token = await userService.refresh(refreshToken);
-            res.json(token.newAccessToken);
+            const refreshResponse = await userService.refresh(refreshToken);
+            res.json(refreshResponse);
         } catch (e) {
             next(e);
         }
@@ -122,7 +123,7 @@ class UserController {
         next: NextFunction,
     ): Promise<UserProfileInfo | void> {
         try {
-            const id = req.user.id;
+            const id = req.params.id;
             const userProfileData = await profileService.getUserProfileInfo(id);
 
             res.json(userProfileData);

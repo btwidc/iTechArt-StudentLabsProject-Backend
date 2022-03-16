@@ -16,7 +16,7 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
         }
 
         const decodedUserData = tokenService.validateAccessToken(accessToken);
-        if (!decodedUserData) {
+        if (decodedUserData instanceof ApiError) {
             return next(apiError.UnauthorizedError());
         }
         if (!(decodedUserData instanceof ApiError)) {
