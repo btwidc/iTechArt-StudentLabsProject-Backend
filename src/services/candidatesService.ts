@@ -3,6 +3,7 @@ import CandidateDto from '../dtos/CandidateDto';
 import CandidateInfo from '../types/CandidateInfo';
 
 import ApiError from '../errors/ApiError';
+import fs from 'fs';
 
 class CandidatesService {
     public async addCandidateInfo(
@@ -13,8 +14,8 @@ class CandidatesService {
         phone: string,
         education: string,
         technology: string,
-        cvName: string,
-        cv: File,
+        cvName?: string,
+        cv?: File,
     ): Promise<CandidateInfo> {
         const candidate = await Candidate.findOne({ where: { email } });
 
@@ -24,19 +25,31 @@ class CandidatesService {
             );
         }
 
-        const candidateData = await Candidate.create({
-            name,
-            surname,
-            email,
-            skype,
-            phone,
-            education,
-            technology,
-            cvName,
-            cv,
-        });
-
-        return new CandidateDto(candidateData);
+        if (cv) {
+            const candidateData = await Candidate.create({
+                name,
+                surname,
+                email,
+                skype,
+                phone,
+                education,
+                technology,
+                cvName,
+                cv,
+            });
+            return new CandidateDto(candidateData);
+        } else {
+            const candidateData = await Candidate.create({
+                name,
+                surname,
+                email,
+                skype,
+                phone,
+                education,
+                technology,
+            });
+            return new CandidateDto(candidateData);
+        }
     }
 
     public async getCandidatesList(): Promise<Array<CandidateInfo>> {
@@ -49,7 +62,7 @@ class CandidatesService {
         return candidatesList;
     }
 
-    public async getCandidateInfo(id: string): Promise<CandidateInfo> {
+    public async getCandidateInfo(id: number): Promise<CandidateInfo> {
         const candidateInfo = await Candidate.findOne({ where: { id } });
 
         if (!candidateInfo) {
@@ -57,6 +70,21 @@ class CandidatesService {
         }
 
         return new CandidateDto(candidateInfo);
+    }
+
+    public async deleteCandidate(id: number): Promise<number> {
+        const candidateInfo = await this.getCandidateInfo(id);
+        const deleteCandidateInfo = await Candidate.destroy({ where: { id } });
+        if (!deleteCandidateInfo) {
+            throw ApiError.BadRequest('Candidate does not exist');
+        }
+
+        if (candidateInfo.cv) {
+            const cvName = candidateInfo.cvName;
+            const cvPath = `public/docs/${cvName}`;
+            fs.unlinkSync(cvPath);
+        }
+        return deleteCandidateInfo;
     }
 }
 

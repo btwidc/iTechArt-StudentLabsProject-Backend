@@ -7,8 +7,8 @@ class CandidateDto {
     public phone: string;
     public education: string;
     public technology: string;
-    public cvName: string;
-    public cv: File;
+    public cvName?: string;
+    public cv?: File;
     constructor(model) {
         this.id = model.id;
         this.name = model.name;
@@ -18,8 +18,8 @@ class CandidateDto {
         this.phone = model.phone;
         this.education = model.education;
         this.technology = model.technology;
-        this.cvName = model.cvName;
-        this.cv = model.cv;
+        this.cvName = model?.cvName;
+        this.cv = model?.cv;
     }
 }
 

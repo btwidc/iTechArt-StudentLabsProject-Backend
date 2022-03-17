@@ -7,8 +7,8 @@ interface CandidateInfo {
     phone: string;
     education: string;
     technology: string;
-    cvName: string;
-    cv: File;
+    cvName?: string;
+    cv?: File;
 }
 
 export default CandidateInfo;

@@ -1,10 +1,11 @@
+import * as fs from 'fs';
 import candidatesService from '../services/candidatesService';
 
 import { validationResult } from 'express-validator';
 import ApiError from '../errors/ApiError';
 
 import CandidateInfo from '../types/CandidateInfo';
-import { NextFunction, Request, Response } from 'express';
+import e, { NextFunction, Request, Response } from 'express';
 import Candidate from '../models/Candidate';
 
 class CandidatesController {
@@ -32,27 +33,37 @@ class CandidatesController {
             } = req.body;
 
             const cv = req?.files?.cv;
-            if (!cv) {
-                return next(ApiError.BadRequest('No file'));
+
+            if (cv) {
+                const fullName = `${name}${surname}`;
+                const cvName = `${fullName}_${cv?.name}`;
+                const cvPath = `public/docs/${cvName}`;
+                cv.mv(cvPath);
+
+                const candidateInfo = await candidatesService.addCandidateInfo(
+                    name,
+                    surname,
+                    email,
+                    skype,
+                    phone,
+                    education,
+                    technology,
+                    cvName,
+                    cv,
+                );
+                res.json(candidateInfo);
+            } else {
+                const candidateInfo = await candidatesService.addCandidateInfo(
+                    name,
+                    surname,
+                    email,
+                    skype,
+                    phone,
+                    education,
+                    technology,
+                );
+                res.json(candidateInfo);
             }
-
-            const cvName = cv.name;
-            const cvPath = `public/docs/${cvName}`;
-            cv.mv(cvPath);
-
-            const candidateInfo = await candidatesService.addCandidateInfo(
-                name,
-                surname,
-                email,
-                skype,
-                phone,
-                education,
-                technology,
-                cvName,
-                cv,
-            );
-
-            res.json(candidateInfo);
         } catch (e) {
             next(e);
         }
@@ -78,12 +89,29 @@ class CandidatesController {
         next: NextFunction,
     ): Promise<CandidateInfo | void> {
         try {
-            const candidateId = req.params.id;
+            const candidateId = Number.parseInt(req.params.id);
             const candidateInfo = await candidatesService.getCandidateInfo(
                 candidateId,
             );
 
             res.json(candidateInfo);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async deleteCandidate(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const candidateId = Number.parseInt(req.params.id);
+            const deleteCandidateInfo = await candidatesService.deleteCandidate(
+                candidateId,
+            );
+
+            res.json(deleteCandidateInfo);
         } catch (e) {
             next(e);
         }
