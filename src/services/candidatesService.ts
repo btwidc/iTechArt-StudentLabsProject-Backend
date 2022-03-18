@@ -1,11 +1,49 @@
+import fs from 'fs';
+
 import Candidate from '../models/Candidate';
 import CandidateDto from '../dtos/CandidateDto';
 import CandidateInfo from '../types/CandidateInfo';
 
 import ApiError from '../errors/ApiError';
-import fs from 'fs';
+
+export const docsPath = 'public/docs/';
 
 class CandidatesService {
+    public async addCandidate(
+        name: string,
+        surname: string,
+        email: string,
+        skype: string,
+        phone: string,
+        education: string,
+        technology: string,
+        cv?: File,
+    ): Promise<CandidateDto> {
+        const candidate = await this.addCandidateInfo(
+            name,
+            surname,
+            email,
+            skype,
+            phone,
+            education,
+            technology,
+        );
+
+        if (cv) {
+            const candidateFullName = `${candidate.id}_${name}_${surname}`;
+            const cvName = `${candidateFullName}_${cv.name}`;
+            const cvPath = `${docsPath}${cvName}`;
+            cv.mv(cvPath);
+
+            candidate.cvName = cvName;
+            await candidate.save();
+
+            return new CandidateDto(candidate);
+        } else {
+            return new CandidateDto(candidate);
+        }
+    }
+
     public async addCandidateInfo(
         name: string,
         surname: string,
@@ -14,9 +52,7 @@ class CandidatesService {
         phone: string,
         education: string,
         technology: string,
-        cvName?: string,
-        cv?: File,
-    ): Promise<CandidateInfo> {
+    ): Promise<CandidateDto> {
         const candidate = await Candidate.findOne({ where: { email } });
 
         if (candidate) {
@@ -25,63 +61,49 @@ class CandidatesService {
             );
         }
 
-        if (cv) {
-            const candidateData = await Candidate.create({
-                name,
-                surname,
-                email,
-                skype,
-                phone,
-                education,
-                technology,
-                cvName,
-                cv,
-            });
-            return new CandidateDto(candidateData);
-        } else {
-            const candidateData = await Candidate.create({
-                name,
-                surname,
-                email,
-                skype,
-                phone,
-                education,
-                technology,
-            });
-            return new CandidateDto(candidateData);
-        }
+        const candidateData = await Candidate.create({
+            name,
+            surname,
+            email,
+            skype,
+            phone,
+            education,
+            technology,
+        });
+        return new CandidateDto(candidateData);
     }
 
     public async getCandidatesList(): Promise<Array<CandidateInfo>> {
-        const candidatesList = await Candidate.findAll();
+        const candidates = await Candidate.findAll();
 
-        if (!candidatesList) {
+        if (!candidates) {
             throw ApiError.BadRequest(`Can't get candidates list`);
         }
 
-        return candidatesList;
+        return candidates;
     }
 
-    public async getCandidateInfo(id: number): Promise<CandidateInfo> {
-        const candidateInfo = await Candidate.findOne({ where: { id } });
+    public async getCandidateInfo(id: number): Promise<CandidateDto> {
+        const candidate = await Candidate.findOne({ where: { id } });
 
-        if (!candidateInfo) {
+        if (!candidate) {
             throw ApiError.BadRequest(`Can't get candidate info`);
         }
 
-        return new CandidateDto(candidateInfo);
+        return new CandidateDto(candidate);
     }
 
     public async deleteCandidate(id: number): Promise<number> {
-        const candidateInfo = await this.getCandidateInfo(id);
+        const candidate = await this.getCandidateInfo(id);
+
         const deleteCandidateInfo = await Candidate.destroy({ where: { id } });
         if (!deleteCandidateInfo) {
             throw ApiError.BadRequest('Candidate does not exist');
         }
 
-        if (candidateInfo.cv) {
-            const cvName = candidateInfo.cvName;
-            const cvPath = `public/docs/${cvName}`;
+        const cvName = candidate.cvName;
+        if (cvName) {
+            const cvPath = `${docsPath}${cvName}`;
             fs.unlinkSync(cvPath);
         }
         return deleteCandidateInfo;

@@ -52,9 +52,6 @@ const Candidate = sequelize.define(
         cvName: {
             type: DataTypes.STRING,
         },
-        cv: {
-            type: DataTypes.BLOB,
-        },
     },
     { timestamps: false },
 );

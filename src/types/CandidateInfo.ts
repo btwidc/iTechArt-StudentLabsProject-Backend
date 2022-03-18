@@ -1,4 +1,7 @@
-interface CandidateInfo {
+import { Model } from 'sequelize';
+import Candidate from '../models/Candidate';
+
+interface CandidateInfo extends Model<typeof Candidate> {
     id: number;
     name: string;
     surname: string;
@@ -8,7 +11,6 @@ interface CandidateInfo {
     education: string;
     technology: string;
     cvName?: string;
-    cv?: File;
 }
 
 export default CandidateInfo;

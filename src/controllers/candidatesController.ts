@@ -1,12 +1,10 @@
-import * as fs from 'fs';
-import candidatesService from '../services/candidatesService';
+import candidatesService, { docsPath } from '../services/candidatesService';
 
 import { validationResult } from 'express-validator';
 import ApiError from '../errors/ApiError';
 
 import CandidateInfo from '../types/CandidateInfo';
-import e, { NextFunction, Request, Response } from 'express';
-import Candidate from '../models/Candidate';
+import { NextFunction, Request, Response } from 'express';
 
 class CandidatesController {
     public async addCandidateInfo(
@@ -34,36 +32,18 @@ class CandidatesController {
 
             const cv = req?.files?.cv;
 
-            if (cv) {
-                const fullName = `${name}${surname}`;
-                const cvName = `${fullName}_${cv?.name}`;
-                const cvPath = `public/docs/${cvName}`;
-                cv.mv(cvPath);
+            const candidateInfo = await candidatesService.addCandidate(
+                name,
+                surname,
+                email,
+                skype,
+                phone,
+                education,
+                technology,
+                cv,
+            );
 
-                const candidateInfo = await candidatesService.addCandidateInfo(
-                    name,
-                    surname,
-                    email,
-                    skype,
-                    phone,
-                    education,
-                    technology,
-                    cvName,
-                    cv,
-                );
-                res.json(candidateInfo);
-            } else {
-                const candidateInfo = await candidatesService.addCandidateInfo(
-                    name,
-                    surname,
-                    email,
-                    skype,
-                    phone,
-                    education,
-                    technology,
-                );
-                res.json(candidateInfo);
-            }
+            res.json(candidateInfo);
         } catch (e) {
             next(e);
         }
@@ -124,12 +104,12 @@ class CandidatesController {
     ) {
         try {
             const candidateId = Number.parseInt(req.params.id);
-            const candidate = await Candidate.findOne({
-                where: { id: candidateId },
-            });
+            const candidate = await candidatesService.getCandidateInfo(
+                candidateId,
+            );
 
             const cvName = candidate.cvName;
-            const cvPath = `public/docs/${cvName}`;
+            const cvPath = `${docsPath}${cvName}`;
 
             res.download(cvPath, cvName, function (err) {
                 if (err) {

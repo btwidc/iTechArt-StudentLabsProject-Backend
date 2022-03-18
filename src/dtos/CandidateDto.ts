@@ -1,4 +1,6 @@
-class CandidateDto {
+import Candidate from '../models/Candidate';
+
+class CandidateDto extends Candidate {
     public id: number;
     public name: string;
     public surname: string;
@@ -8,8 +10,8 @@ class CandidateDto {
     public education: string;
     public technology: string;
     public cvName?: string;
-    public cv?: File;
     constructor(model) {
+        super();
         this.id = model.id;
         this.name = model.name;
         this.surname = model.surname;
@@ -19,7 +21,6 @@ class CandidateDto {
         this.education = model.education;
         this.technology = model.technology;
         this.cvName = model?.cvName;
-        this.cv = model?.cv;
     }
 }
 
