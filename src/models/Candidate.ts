@@ -49,7 +49,7 @@ const Candidate = sequelize.define(
       allowNull: false,
       required: true,
     },
-    cvName: {
+    cvLink: {
       type: DataTypes.STRING,
     },
   },

@@ -9,7 +9,7 @@ class CandidateDto extends Candidate {
   public phone: string;
   public education: string;
   public technology: string;
-  public cvName?: string;
+  public cvLink?: string;
   constructor(model) {
     super();
     this.id = model.id;
@@ -20,7 +20,7 @@ class CandidateDto extends Candidate {
     this.phone = model.phone;
     this.education = model.education;
     this.technology = model.technology;
-    this.cvName = model?.cvName;
+    this.cvLink = model?.cvLink;
   }
 }
 

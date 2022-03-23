@@ -1,12 +1,10 @@
-import fs from 'fs';
+const cloudinary = require('cloudinary').v2;
 
 import Candidate from '../models/Candidate';
 import CandidateDto from '../dtos/CandidateDto';
 import CandidateInfo from '../types/CandidateInfo';
 
 import ApiError from '../errors/ApiError';
-
-export const docsPath = 'public/docs/';
 
 class CandidatesService {
   public async addCandidate(
@@ -32,11 +30,20 @@ class CandidatesService {
     if (cv) {
       const candidateFullName = `${candidate.id}_${name}_${surname}`;
       const cvName = `${candidateFullName}_${cv.name}`;
-      const cvPath = `${docsPath}${cvName}`;
-      cv.mv(cvPath);
 
-      candidate.cvName = cvName;
-      await candidate.save();
+      await cloudinary.uploader
+        .upload_stream(
+          { resource_type: 'auto', public_id: cvName },
+          (error, result) => {
+            if (error) {
+              throw ApiError.BadRequest('Error during upload cv');
+            } else {
+              candidate.cvLink = result.secure_url;
+              candidate.save();
+            }
+          },
+        )
+        .end(cv.data);
 
       return new CandidateDto(candidate);
     } else {
@@ -52,14 +59,14 @@ class CandidatesService {
     phone: string,
     education: string,
     technology: string,
-  ): Promise<CandidateInfo> {
+  ): Promise<CandidateDto> {
     const candidate = await Candidate.findOne({ where: { email } });
 
     if (candidate) {
       throw ApiError.BadRequest(`Candidate with email ${email} already exists`);
     }
 
-    const candidateData = await Candidate.create({
+    return await Candidate.create({
       name,
       surname,
       email,
@@ -68,7 +75,6 @@ class CandidatesService {
       education,
       technology,
     });
-    return candidateData;
   }
 
   public async getCandidatesList(): Promise<Array<CandidateInfo>> {
@@ -99,11 +105,19 @@ class CandidatesService {
       throw ApiError.BadRequest('Candidate does not exist');
     }
 
-    const cvName = candidate.cvName;
-    if (cvName) {
-      const cvPath = `${docsPath}${cvName}`;
-      fs.unlinkSync(cvPath);
-    }
+    const cvLink = candidate.cvLink;
+    const cvName = cvLink.split('/')[7];
+
+    await cloudinary.uploader.destroy(
+      cvName,
+      { resource_type: 'raw' },
+      (error) => {
+        if (error) {
+          throw ApiError.BadRequest('Error during destroy cv');
+        }
+      },
+    );
+
     return deleteCandidateInfo;
   }
 }
