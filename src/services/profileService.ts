@@ -41,7 +41,7 @@ class ProfileService {
         return new UserProfileDto(userProfileData);
     }
 
-    public async getUserProfileInfo(userId: number): Promise<UserProfileInfo> {
+    public async getUserProfileInfo(userId: string): Promise<UserProfileInfo> {
         const userProfile = await Profile.findOne({ where: { userId } });
 
         if (!userProfile) {

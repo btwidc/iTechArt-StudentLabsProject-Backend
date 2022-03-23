@@ -17,7 +17,7 @@ usersRouter.post('/logout', usersController.logout);
 usersRouter.post('/refresh', usersController.refresh);
 
 usersRouter.get(
-    '/profile',
+    '/profile/:id',
     authorizationMiddleware,
     usersController.getUserProfileInfo,
 );
