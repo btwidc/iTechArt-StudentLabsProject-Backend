@@ -1,5 +1,3 @@
-import { rejects } from 'assert';
-
 const cloudinary = require('cloudinary').v2;
 
 import Candidate from '../models/Candidate';
