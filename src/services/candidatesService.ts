@@ -34,12 +34,12 @@ class CandidatesService {
       await cloudinary.uploader
         .upload_stream(
           { resource_type: 'auto', public_id: cvName },
-          (error, result) => {
+          async (error, result) => {
             if (error) {
               throw ApiError.BadRequest('Error during upload cv');
             } else {
               candidate.cvLink = result.secure_url;
-              candidate.save();
+              await candidate.save();
             }
           },
         )
