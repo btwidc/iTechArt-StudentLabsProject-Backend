@@ -1,3 +1,5 @@
+import { rejects } from 'assert';
+
 const cloudinary = require('cloudinary').v2;
 
 import Candidate from '../models/Candidate';
@@ -31,24 +33,32 @@ class CandidatesService {
       const candidateFullName = `${candidate.id}_${name}_${surname}`;
       const cvName = `${candidateFullName}_${cv.name}`;
 
-      await cloudinary.uploader
-        .upload_stream(
-          { resource_type: 'auto', public_id: cvName },
-          (error, result) => {
-            if (error) {
-              throw ApiError.BadRequest('Error during upload cv');
-            } else {
-              candidate.cvLink = result.secure_url;
-            }
-          },
-        )
-        .then(await candidate.save())
-        .end(cv.data);
+      const uploadUrl = await this.getCvUploadLink(cv, cvName);
+
+      await candidate.set({ cvLink: uploadUrl });
+      await candidate.save();
 
       return new CandidateDto(candidate);
     } else {
       return new CandidateDto(candidate);
     }
+  }
+
+  public async getCvUploadLink(cv: File, cvName: string) {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          { resource_type: 'auto', public_id: cvName },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            } else {
+              return resolve(result.secure_url);
+            }
+          },
+        )
+        .end(cv.data);
+    });
   }
 
   public async addCandidateInfo(
