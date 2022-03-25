@@ -2,10 +2,9 @@ import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
 import Event from './Event';
-import EventResponse from './EventResponse';
 
-const User = sequelize.define(
-  'user',
+const EventResponse = sequelize.define(
+  'eventResponse',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,19 +13,15 @@ const User = sequelize.define(
       allowNull: false,
       required: true,
     },
-    email: {
+    responseContent: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       required: true,
     },
-    password: { type: DataTypes.STRING, allowNull: false, required: true },
-    role: { type: DataTypes.STRING, defaultValue: 'HR' },
   },
   { timestamps: false },
 );
 
-User.hasMany(Event);
-User.hasMany(EventResponse);
+EventResponse.hasMany(Event);
 
-export default User;
+export default EventResponse;

@@ -1,6 +1,8 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
+import Event from './Event';
+
 const Candidate = sequelize.define(
   'candidate',
   {
@@ -55,5 +57,7 @@ const Candidate = sequelize.define(
   },
   { timestamps: false },
 );
+
+Candidate.hasMany(Event);
 
 export default Candidate;
