@@ -4,14 +4,14 @@ import { validationResult } from 'express-validator';
 import ApiError from '../errors/ApiError';
 
 import { NextFunction, Request, Response } from 'express';
-import CategoryResponse from '../types/CategoryResponse';
+import CategoryInfo from '../types/CategoryInfo';
 
 class CategoriesController {
   public async getCategoriesList(
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Array<CategoryResponse> | void> {
+  ): Promise<Array<CategoryInfo> | void> {
     try {
       const categoriesList = await categoriesService.getCategoriesList();
 
@@ -25,7 +25,7 @@ class CategoriesController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<CategoryResponse | void> {
+  ): Promise<CategoryInfo | void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {

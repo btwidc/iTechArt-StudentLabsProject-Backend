@@ -7,49 +7,61 @@ import UserProfileDto from '../dtos/UserProfileDto';
 import UserProfileInfo from '../types/UserProfileInfo';
 
 import ApiError from '../errors/ApiError';
+import CandidateInfo from '../types/CandidateInfo';
+import Candidate from '../models/Candidate';
 
 class ProfileService {
-    public async addUserProfileInfo(
-        name: string,
-        surname: string,
-        email: string,
-        skype: string,
-        ageExperience: number,
-        department: string,
-        summary: string,
-    ): Promise<UserProfileInfo> {
-        const user = await User.findOne({ where: { email } });
+  public async addUserProfileInfo(
+    name: string,
+    surname: string,
+    email: string,
+    skype: string,
+    ageExperience: number,
+    department: string,
+    summary: string,
+  ): Promise<UserProfileInfo> {
+    const user = await User.findOne({ where: { email } });
 
-        if (!user) {
-            throw ApiError.BadRequest(`User with email ${email} not exists`);
-        }
-
-        const userDto = new UserDto(user);
-        const userId = userDto.id;
-
-        const userProfileData = await Profile.create({
-            name,
-            surname,
-            email,
-            skype,
-            ageExperience,
-            department,
-            summary,
-            userId,
-        });
-
-        return new UserProfileDto(userProfileData);
+    if (!user) {
+      throw ApiError.BadRequest(`User with email ${email} not exists`);
     }
 
-    public async getUserProfileInfo(userId: string): Promise<UserProfileInfo> {
-        const userProfile = await Profile.findOne({ where: { userId } });
+    const userDto = new UserDto(user);
+    const userId = userDto.id;
 
-        if (!userProfile) {
-            throw ApiError.BadRequest(`Can't get user profile`);
-        }
+    const userProfileData = await Profile.create({
+      name,
+      surname,
+      email,
+      skype,
+      ageExperience,
+      department,
+      summary,
+      userId,
+    });
 
-        return new UserProfileDto(userProfile);
+    return new UserProfileDto(userProfileData);
+  }
+
+  public async getUserProfileInfo(userId: string): Promise<UserProfileInfo> {
+    const userProfile = await Profile.findOne({ where: { userId } });
+
+    if (!userProfile) {
+      throw ApiError.BadRequest(`Can't get user profile`);
     }
+
+    return new UserProfileDto(userProfile);
+  }
+
+  public async getProfilesList(): Promise<Array<UserProfileInfo>> {
+    const profiles = await Profile.findAll();
+
+    if (!profiles) {
+      throw ApiError.BadRequest(`Can't get profiles list`);
+    }
+
+    return profiles;
+  }
 }
 
 export default new ProfileService();

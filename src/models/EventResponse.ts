@@ -2,6 +2,7 @@ import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
 import Event from './Event';
+import User from './User';
 
 const EventResponse = sequelize.define(
   'eventResponse',
@@ -15,7 +16,6 @@ const EventResponse = sequelize.define(
     },
     responseContent: {
       type: DataTypes.STRING,
-      allowNull: false,
       required: true,
     },
   },
@@ -23,5 +23,7 @@ const EventResponse = sequelize.define(
 );
 
 EventResponse.hasMany(Event);
+Event.belongsTo(EventResponse);
+EventResponse.belongsTo(User);
 
 export default EventResponse;

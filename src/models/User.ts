@@ -1,9 +1,6 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
-import Event from './Event';
-import EventResponse from './EventResponse';
-
 const User = sequelize.define(
   'user',
   {
@@ -25,8 +22,5 @@ const User = sequelize.define(
   },
   { timestamps: false },
 );
-
-User.hasMany(Event);
-User.hasMany(EventResponse);
 
 export default User;

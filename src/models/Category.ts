@@ -23,5 +23,6 @@ const Category = sequelize.define(
 );
 
 Category.hasMany(Event);
+Event.belongsTo(Category);
 
 export default Category;

@@ -12,7 +12,7 @@ const Event = sequelize.define(
       required: true,
     },
     date: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: false,
       required: true,
     },

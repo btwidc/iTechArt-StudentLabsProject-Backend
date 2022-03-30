@@ -59,5 +59,6 @@ const Candidate = sequelize.define(
 );
 
 Candidate.hasMany(Event);
+Event.belongsTo(Candidate);
 
 export default Candidate;
