@@ -11,7 +11,7 @@ class CategoriesController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Array<CategoryInfo> | void> {
+  ): Promise<CategoryInfo[] | void> {
     try {
       const categoriesList = await categoriesService.getCategoriesList();
 

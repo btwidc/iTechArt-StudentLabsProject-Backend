@@ -85,7 +85,7 @@ class CandidatesService {
     });
   }
 
-  public async getCandidatesList(): Promise<Array<CandidateInfo>> {
+  public async getCandidatesList(): Promise<CandidateInfo[]> {
     const candidates = await Candidate.findAll();
 
     if (!candidates) {

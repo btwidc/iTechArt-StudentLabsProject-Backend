@@ -7,8 +7,6 @@ import UserProfileDto from '../dtos/UserProfileDto';
 import UserProfileInfo from '../types/UserProfileInfo';
 
 import ApiError from '../errors/ApiError';
-import CandidateInfo from '../types/CandidateInfo';
-import Candidate from '../models/Candidate';
 
 class ProfileService {
   public async addUserProfileInfo(
@@ -53,7 +51,7 @@ class ProfileService {
     return new UserProfileDto(userProfile);
   }
 
-  public async getProfilesList(): Promise<Array<UserProfileInfo>> {
+  public async getProfilesList(): Promise<UserProfileInfo[]> {
     const profiles = await Profile.findAll();
 
     if (!profiles) {

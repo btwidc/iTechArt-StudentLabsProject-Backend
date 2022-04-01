@@ -4,7 +4,7 @@ import CategoryDto from '../dtos/CategoryDto';
 import ApiError from '../errors/ApiError';
 
 class CategoriesService {
-  public async getCategoriesList(): Promise<Array<CategoryDto>> {
+  public async getCategoriesList(): Promise<CategoryDto[]> {
     const categories = await Category.findAll();
 
     if (!categories) {

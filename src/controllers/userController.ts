@@ -3,12 +3,12 @@ import profileService from '../services/profileService';
 
 import { validationResult } from 'express-validator';
 import ApiError from '../errors/ApiError';
+
 import AuthResponseType from '../types/AuthResponseType';
 import UserProfileInfo from '../types/UserProfileInfo';
-import { NextFunction, Request, Response } from 'express';
 import RefreshResponse from '../types/RefreshResponse';
-import CategoryInfo from '../types/CategoryInfo';
-import categoriesService from '../services/categoriesService';
+
+import { NextFunction, Request, Response } from 'express';
 
 class UserController {
   public async registration(
@@ -58,6 +58,7 @@ class UserController {
     try {
       const refreshToken = req.body.refreshToken;
       await userService.logout(refreshToken);
+
       res.json('Successfully logout');
     } catch (e) {
       next(e);
@@ -72,6 +73,7 @@ class UserController {
     try {
       const refreshToken = req.body.refreshToken;
       const refreshResponse = await userService.refresh(refreshToken);
+
       res.json(refreshResponse);
     } catch (e) {
       next(e);
@@ -134,7 +136,7 @@ class UserController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Array<UserProfileInfo> | void> {
+  ): Promise<UserProfileInfo[] | void> {
     try {
       const profilesList = await profileService.getProfilesList();
 

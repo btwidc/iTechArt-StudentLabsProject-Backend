@@ -15,7 +15,7 @@ import CategoryDto from '../dtos/CategoryDto';
 import ApiError from '../errors/ApiError';
 
 class EventsService {
-  public async getEvents(): Promise<EventInfo> {
+  public async getEvents(): Promise<EventInfo[]> {
     const events = await Event.findAll({
       attributes: ['id', 'date'],
       include: [
@@ -103,7 +103,6 @@ class EventsService {
     const eventDto = new EventDto(event);
     const eventId = eventDto.id;
 
-    // return { id, date, participant, candidate, category, eventResponse };
     return this.getEvent(eventId);
   }
 

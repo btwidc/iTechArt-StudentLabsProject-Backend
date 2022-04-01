@@ -11,7 +11,7 @@ class EventsController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Array<EventInfo> | void> {
+  ): Promise<EventInfo[] | void> {
     try {
       const events = await eventsService.getEvents();
 
