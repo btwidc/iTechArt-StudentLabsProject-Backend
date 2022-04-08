@@ -1,8 +1,8 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
-const User = sequelize.define(
-  'user',
+const Event = sequelize.define(
+  'event',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -11,16 +11,13 @@ const User = sequelize.define(
       allowNull: false,
       required: true,
     },
-    email: {
+    date: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       required: true,
     },
-    password: { type: DataTypes.STRING, allowNull: false, required: true },
-    role: { type: DataTypes.STRING, defaultValue: 'HR' },
   },
   { timestamps: false },
 );
 
-export default User;
+export default Event;

@@ -44,7 +44,7 @@ class CandidatesController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Array<CandidateInfo> | void> {
+  ): Promise<CandidateInfo[] | void> {
     try {
       const candidatesList = await candidatesService.getCandidatesList();
 

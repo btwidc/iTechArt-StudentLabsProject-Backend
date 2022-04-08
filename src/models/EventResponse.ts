@@ -1,8 +1,11 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
 
-const User = sequelize.define(
-  'user',
+import Event from './Event';
+import User from './User';
+
+const EventResponse = sequelize.define(
+  'eventResponse',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -11,16 +14,16 @@ const User = sequelize.define(
       allowNull: false,
       required: true,
     },
-    email: {
+    responseContent: {
       type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
       required: true,
     },
-    password: { type: DataTypes.STRING, allowNull: false, required: true },
-    role: { type: DataTypes.STRING, defaultValue: 'HR' },
   },
   { timestamps: false },
 );
 
-export default User;
+EventResponse.hasMany(Event);
+Event.belongsTo(EventResponse);
+EventResponse.belongsTo(User);
+
+export default EventResponse;
