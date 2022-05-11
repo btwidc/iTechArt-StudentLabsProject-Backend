@@ -33,7 +33,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin:
-      'https://i-tech-art-student-labs-project-frontend-1palfcusu.vercel.app/',
+      'https://i-tech-art-student-labs-project-frontend-m346xuq96.vercel.app/',
     methods: ['GET', 'POST'],
   },
 });
