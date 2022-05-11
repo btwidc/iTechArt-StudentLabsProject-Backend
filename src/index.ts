@@ -39,7 +39,7 @@ const io = new Server(server, {
   cors: {
     origin:
       'https://i-tech-art-student-labs-project-frontend-gwg6buot6.vercel.app/',
-    methods: ['GET', 'POST'],
+    methods: '*',
   },
 });
 
