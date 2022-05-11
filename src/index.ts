@@ -26,7 +26,12 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      'https://i-tech-art-student-labs-project-frontend-m346xuq96.vercel.app/',
+  }),
+);
 
 const server = http.createServer(app);
 
