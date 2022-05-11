@@ -28,8 +28,7 @@ cloudinary.config({
 
 app.use(
   cors({
-    origin:
-      'https://i-tech-art-student-labs-project-frontend-gwg6buot6.vercel.app/',
+    origin: '*',
   }),
 );
 
@@ -37,8 +36,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin:
-      'https://i-tech-art-student-labs-project-frontend-gwg6buot6.vercel.app/',
+    origin: '*',
     methods: '*',
   },
 });
