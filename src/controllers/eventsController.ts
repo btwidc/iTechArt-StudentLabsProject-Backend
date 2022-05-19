@@ -5,6 +5,7 @@ import ApiError from '../errors/ApiError';
 
 import { NextFunction, Request, Response } from 'express';
 import EventInfo from '../types/EventInfo';
+import EventResponse from '../types/EventResponse';
 
 class EventsController {
   public async getEventsList(
@@ -66,6 +67,59 @@ class EventsController {
 
       res.json(event);
     } catch (e) {
+      next(e);
+    }
+  }
+
+  public async getEventResponse(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<EventResponse | void> {
+    try {
+      const eventId = Number.parseInt(req.params.id);
+      const eventResponse = await eventsService.getEventResponse(eventId);
+
+      res.json(eventResponse);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  public async getUserEventsResponses(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<EventResponse[] | void> {
+    try {
+      const userId = Number.parseInt(req.params.id);
+      const eventResponses = await eventsService.getUserEventsResponses(userId);
+
+      res.json(eventResponses);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  public async addEventResponse(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<EventResponse | void> {
+    try {
+      const eventId = Number.parseInt(req.params.id);
+      const { responseContent } = req.body;
+
+      const eventResponse = await eventsService.addEventResponse(
+        eventId,
+        responseContent,
+      );
+
+      res.json(eventResponse);
+    } catch (e) {
+      console.log(e);
       next(e);
     }
   }
