@@ -3,7 +3,7 @@ dotenv.config();
 
 import http from 'http';
 import express from 'express';
-// import cors from 'cors';
+import cors from 'cors';
 
 // import { Server } from 'socket.io';
 
@@ -26,6 +26,7 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
+app.use(cors());
 // app.use(
 //   cors({
 //     origin: '*',
