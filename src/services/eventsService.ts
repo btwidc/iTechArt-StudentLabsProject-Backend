@@ -1,3 +1,5 @@
+import { Op } from 'sequelize';
+
 import Event from '../models/Event';
 import EventDto from '../dtos/EventDto';
 import EventInfo from '../types/EventInfo';
@@ -13,6 +15,7 @@ import CandidateDto from '../dtos/CandidateDto';
 import CategoryDto from '../dtos/CategoryDto';
 
 import ApiError from '../errors/ApiError';
+import EventResponseDto from '../dtos/EventResponseDto';
 
 class EventsService {
   public async getEvents(): Promise<EventInfo[]> {
@@ -39,7 +42,7 @@ class EventsService {
     return events;
   }
 
-  public async getEvent(eventID): Promise<EventInfo> {
+  public async getEvent(eventID: number): Promise<EventInfo> {
     const event = await Event.findOne({
       where: eventID,
       attributes: ['id', 'date'],
@@ -104,6 +107,47 @@ class EventsService {
     const eventId = eventDto.id;
 
     return this.getEvent(eventId);
+  }
+
+  public async getEventResponse(
+    eventResponseId: number,
+  ): Promise<EventResponseDto | void> {
+    const eventResponse = await EventResponse.findOne({
+      where: { id: eventResponseId },
+    });
+    if (!eventResponse) {
+      throw ApiError.BadRequest(`Can't get response`);
+    }
+    return eventResponse;
+  }
+
+  public async getUserEventsResponses(
+    userId: number,
+  ): Promise<EventResponseDto[] | void> {
+    const eventResponses = await EventResponse.findAll({
+      where: {
+        responseContent: {
+          [Op.ne]: null,
+        },
+        userId: userId,
+      },
+    });
+    if (!eventResponses) {
+      throw ApiError.BadRequest(`Can't get user responses`);
+    }
+    return eventResponses;
+  }
+
+  public async addEventResponse(
+    eventId: number,
+    responseContent: string,
+  ): Promise<EventResponseDto | void> {
+    return await EventResponse.update(
+      {
+        responseContent: responseContent,
+      },
+      { where: { id: eventId } },
+    );
   }
 
   public async getParticipant(
